@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 )
 
 // Ensures gofmt doesn't remove the "net" and "os" imports in stage 1 (feel free to remove this!)
@@ -30,10 +31,17 @@ func main() {
 	}
 	//send messages back
 	for {
-		_, err := bufio.NewReader(connServer).ReadString('\n')
+		stringresp, err := bufio.NewReader(connServer).ReadString('\n')
 		if err != nil {
 			log.Fatal(err)
 		}
-		connServer.Write([]byte("+PONG\r\n"))
+		//connServer.Write([]byte("+PONG\r\n"))
+		//parse based on pong response
+		responses := strings.Split(stringresp, "\n")
+		for _, response := range responses {
+			var _ = response
+			connServer.Write([]byte("+PONG\r\n"))
+		}
+
 	}
 }
