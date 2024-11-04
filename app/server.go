@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"strings"
@@ -24,34 +23,25 @@ func main() {
 		fmt.Println("Failed to bind to port 6379")
 		os.Exit(1)
 	}
-	connServer, err := l.Accept()
-	if err != nil {
-		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)
-	}
-	//send messages back
 	for {
-		stringresp, err := bufio.NewReader(connServer).ReadString('\n')
+		connServer, err := l.Accept()
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("Error accepting connection: ", err.Error())
+			os.Exit(1)
 		}
-		//trim the newline character at the end
-		// clearMessage := strings.TrimSpace(string(stringresp))
+		//send messages back
+		go handleConnection(connServer)
+	}
+}
 
-		//connServer.Write([]byte("+PONG\r\n"))
-		//parse based on pong response
-		//responses := strings.Split(stringresp, "\n")
+func handleConnection(conn net.Conn) {
+	defer conn.Close()
 
-		// for _, response := range responses {
-		// 	var _ = response
-		// 	connServer.Write([]byte("+PONG\r\n"))
-		// }
-		message := strings.TrimSpace(stringresp)
-		messages := strings.Split(message, "\n")
-
-		for _, v := range messages {
-			var _ = v
-			connServer.Write([]byte("+PONG\r\n"))
+	scanner := bufio.NewScanner(conn)
+	for scanner.Scan() {
+		text := scanner.Text()
+		if strings.TrimSpace(text) == "PING" {
+			conn.Write([]byte("+PONG\r\n"))
 		}
 	}
 }
