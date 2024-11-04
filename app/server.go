@@ -50,6 +50,7 @@ func main() {
 		messages := strings.Split(message, "\n")
 
 		for _, v := range messages {
+			var _ = v
 			connServer.Write([]byte("+PONG\r\n"))
 		}
 	}
