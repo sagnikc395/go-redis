@@ -35,13 +35,22 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		//trim the newline character at the end
+		// clearMessage := strings.TrimSpace(string(stringresp))
+
 		//connServer.Write([]byte("+PONG\r\n"))
 		//parse based on pong response
-		responses := strings.Split(stringresp, "\n")
-		for _, response := range responses {
-			var _ = response
+		//responses := strings.Split(stringresp, "\n")
+
+		// for _, response := range responses {
+		// 	var _ = response
+		// 	connServer.Write([]byte("+PONG\r\n"))
+		// }
+		message := strings.TrimSpace(stringresp)
+		messages := strings.Split(message, "\n")
+
+		for _, v := range messages {
 			connServer.Write([]byte("+PONG\r\n"))
 		}
-
 	}
 }
